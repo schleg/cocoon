@@ -1,9 +1,15 @@
 (function($) {
-
-  var cocoon_element_counter = 0;
+  var cocoon_elements = new Array();
 
   var create_new_id = function() {
-    return (new Date().getTime() + cocoon_element_counter++);
+    var new_id;
+
+    do {
+      new_id = new Date().getTime();
+    } while (cocoon_elements.indexOf(new_id) != -1);
+
+    cocoon_elements.push(new_id);
+    return (new_id);
   }
   
   var newcontent_braced = function(id) {
@@ -30,7 +36,7 @@
         new_content           = content.replace(regexp_braced, newcontent_braced(new_id)),
         new_contents          = [];
 
-    
+
     if (new_content == content) {
       regexp_braced     = new RegExp('\\[new_' + assocs + '\\](.*?\\s)', 'g');
       regexp_underscord = new RegExp('_new_' + assocs + '_(\\w*)', 'g');
@@ -42,16 +48,16 @@
 
     count = (isNaN(count) ? 1 : Math.max(count, 1));
     count -= 1;
-    
+
     while (count) {
       new_id      = create_new_id();
       new_content = content.replace(regexp_braced, newcontent_braced(new_id));
       new_content = new_content.replace(regexp_underscord, newcontent_underscord(new_id));
       new_contents.push(new_content);
-      
+
       count -= 1;
     }
-    
+
     if (insertionNode){
       if (insertionTraversal){
         insertionNode = $this[insertionTraversal](insertionNode);
